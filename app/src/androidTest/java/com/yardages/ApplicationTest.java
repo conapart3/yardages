@@ -1,4 +1,4 @@
-package com.six;
+package com.yardages;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

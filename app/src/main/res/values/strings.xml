@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Six</string>
+    <string name="app_name">Yardages</string>
     <string name="title_section1">Workouts</string>
     <string name="title_section2">Schedule</string>
     <string name="title_section3">Challenge</string>

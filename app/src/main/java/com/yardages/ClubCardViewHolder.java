@@ -1,4 +1,4 @@
-package com.six;
+package com.yardages;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
