@@ -1,32 +1,36 @@
 package com.yardages;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gc.materialdesign.views.ButtonRectangle;
 import com.gc.materialdesign.views.ButtonFloat;
-import com.google.android.gms.common.ConnectionResult;
+import com.gc.materialdesign.views.ButtonRectangle;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import android.location.LocationListener;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 
 /**
- * Created by Conal on 17/06/2015.
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link YardagesFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link YardagesFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
-public class YardagesActivity extends Activity  {
-
+public class YardagesFragment extends Fragment {
     GoogleApiClient mGoogleApiClient;
     Location location1,location2;
     LocationManager locationManager;
@@ -37,35 +41,60 @@ public class YardagesActivity extends Activity  {
     private ButtonRectangle button1, button2, button3;
     private TextView latitude1, longitude1, latitude2, longitude2, distance, distanceOld;
     private ButtonFloat floatButton;
+    private Context context;
 
     private ArrayList<Location> locationList;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.yardages_main);
 
-        button1 = (ButtonRectangle) findViewById(R.id.button1);
-        button2 = (ButtonRectangle) findViewById(R.id.button2);
-        button3 = (ButtonRectangle) findViewById(R.id.button3);
-        floatButton = (ButtonFloat) findViewById(R.id.buttonFloat);
-        latitude1 = (TextView) findViewById(R.id.latitude1);
-        longitude1 = (TextView) findViewById(R.id.longitude1);
-        latitude2 = (TextView) findViewById(R.id.latitude2);
-        longitude2 = (TextView) findViewById(R.id.longitude2);
-        distance = (TextView) findViewById(R.id.distance);
-        distanceOld = (TextView) findViewById(R.id.distanceOld);
+    private OnFragmentInteractionListener mListener;
 
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment YardagesFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static YardagesFragment newInstance(String param1, String param2) {
+        YardagesFragment fragment = new YardagesFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public YardagesFragment() {
+        // Required empty public constructor
     }
 
     @Override
-    protected void onStart() {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        context = getActivity();
+
+        button1 = (ButtonRectangle) getActivity().findViewById(R.id.button1);
+        button2 = (ButtonRectangle) getActivity().findViewById(R.id.button2);
+        button3 = (ButtonRectangle) getActivity().findViewById(R.id.button3);
+        floatButton = (ButtonFloat) getActivity().findViewById(R.id.buttonFloat);
+        latitude1 = (TextView) getActivity().findViewById(R.id.latitude1);
+        longitude1 = (TextView) getActivity().findViewById(R.id.longitude1);
+        latitude2 = (TextView) getActivity().findViewById(R.id.latitude2);
+        longitude2 = (TextView) getActivity().findViewById(R.id.longitude2);
+        distance = (TextView) getActivity().findViewById(R.id.distance);
+        distanceOld = (TextView) getActivity().findViewById(R.id.distanceOld);
+
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+    }
+
+    @Override
+    public void onStart() {
         super.onStart();
         locationListener = new LocationListener(){
             public void onLocationChanged(Location location) {
                 changeCounts = changeCounts + 1;
-                Context context = getApplicationContext();
                 CharSequence text = "Location changed." + changeCounts;
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
@@ -83,10 +112,42 @@ public class YardagesActivity extends Activity  {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         locationManager.removeUpdates(locationListener);
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_yardages, container, false);
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     private void setupButtonListeners(){
 
         button1.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +159,6 @@ public class YardagesActivity extends Activity  {
                     latitude1.setText(String.valueOf(location1.getLatitude()));
                     longitude1.setText(String.valueOf(location1.getLongitude()));
                 } else {
-                    Context context = getApplicationContext();
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, text, duration);
@@ -115,7 +175,6 @@ public class YardagesActivity extends Activity  {
                     latitude2.setText(String.valueOf(location2.getLatitude()));
                     longitude2.setText(String.valueOf(location2.getLongitude()));
                 } else {
-                    Context context = getApplicationContext();
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, text, duration);
@@ -144,7 +203,6 @@ public class YardagesActivity extends Activity  {
                     text = "Distance shown.";
                 }
 
-                Context context = getApplicationContext();
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
@@ -154,13 +212,23 @@ public class YardagesActivity extends Activity  {
             @Override
             public void onClick(View view) {
                 CharSequence text = "Golf ball added.";
-                Context context = getApplicationContext();
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
+//
+//                ScatterFragment scatterFragment = new ScatterFragment();
+//                Bundle args = new Bundle();
+//                args.putInt("key1", 100);
+//                scatterFragment.setArguments(args);
+//
+//                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                transaction.replace(R.id.container, scatterFragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
             }
         });
     }
+
 
     public double getDistanceMetres(Location l1, Location l2) {
         double lat1 = l1.getLatitude();
@@ -184,6 +252,21 @@ public class YardagesActivity extends Activity  {
         double yards = metres*1.0936133;
         yards = (double)(Math.round(yards*100))/100;
         return yards;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        public void onFragmentInteraction(Uri uri);
     }
 
 }

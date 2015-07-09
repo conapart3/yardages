@@ -12,4 +12,5 @@
     <color name="textSecondaryWhite">#FDFDFD</color>
     <color name="textHintWhite">#FBFBFB</color>
     <color name="dividerWhite">#F9F9F9</color>
+    <color name="greenScatter">#1F2E00</color>
 </resources>
