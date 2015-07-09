@@ -18,6 +18,9 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import android.location.LocationListener;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
 
 /**
  * Created by Conal on 17/06/2015.
@@ -32,8 +35,10 @@ public class YardagesActivity extends Activity  {
     // Request code to use when launching the resolution activity
 
     private ButtonRectangle button1, button2, button3;
-    private TextView latitude1, longitude1, latitude2, longitude2, distance;
+    private TextView latitude1, longitude1, latitude2, longitude2, distance, distanceOld;
     private ButtonFloat floatButton;
+
+    private ArrayList<Location> locationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class YardagesActivity extends Activity  {
         latitude2 = (TextView) findViewById(R.id.latitude2);
         longitude2 = (TextView) findViewById(R.id.longitude2);
         distance = (TextView) findViewById(R.id.distance);
+        distanceOld = (TextView) findViewById(R.id.distanceOld);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
     }
@@ -62,7 +68,6 @@ public class YardagesActivity extends Activity  {
                 Context context = getApplicationContext();
                 CharSequence text = "Location changed." + changeCounts;
                 int duration = Toast.LENGTH_SHORT;
-
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
@@ -96,7 +101,6 @@ public class YardagesActivity extends Activity  {
                     Context context = getApplicationContext();
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
-
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 }
@@ -114,7 +118,6 @@ public class YardagesActivity extends Activity  {
                     Context context = getApplicationContext();
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
-
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 }
@@ -123,16 +126,20 @@ public class YardagesActivity extends Activity  {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CharSequence text="";
-                if(location1==null && location2==null)
+                CharSequence text = "";
+                if (location1 == null && location2 == null)
                     text = "Point A and B not set, wait for GPS signal.";
-                else if(location1==null && location2!=null)
+                else if (location1 == null && location2 != null)
                     text = "Point A not set, select your start point.";
-                else if(location1!=null && location2==null)
+                else if (location1 != null && location2 == null)
                     text = "Select Point B location.";
 
-                if(location1!=null && location2!=null){
-                    float dist = location1.distanceTo(location2);
+                if (location1 != null && location2 != null) {
+                    double distOld = location1.distanceTo(location2);
+                    double dist = getDistanceMetres(location1, location2);
+//                    distOld = metresToYards(distOld);
+                    dist = metresToYards(dist);
+                    distanceOld.setText("" + distOld);
                     distance.setText("" + dist);
                     text = "Distance shown.";
                 }
@@ -153,6 +160,30 @@ public class YardagesActivity extends Activity  {
                 toast.show();
             }
         });
+    }
+
+    public double getDistanceMetres(Location l1, Location l2) {
+        double lat1 = l1.getLatitude();
+        double lon1 = l1.getLongitude();
+        double lat2 = l2.getLatitude();
+        double lon2 = l2.getLongitude();
+
+        int EARTH_RADIUS_KM = 6371;
+        double lat1Rad = Math.toRadians(lat1);
+        double lat2Rad = Math.toRadians(lat2);
+        double deltaLonRad = Math.toRadians(lon2 - lon1);
+
+        double dist = Math.acos(Math.sin(lat1Rad) * Math.sin(lat2Rad) +
+                Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+                        Math.cos(deltaLonRad)) * EARTH_RADIUS_KM;
+        dist = dist * 1000;
+        return dist;
+    }
+
+    public double metresToYards(double metres) {
+        double yards = metres*1.0936133;
+        yards = (double)(Math.round(yards*100))/100;
+        return yards;
     }
 
 }
