@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="nav_menu_titles">
+        <item>Measure</item>
+        <item>Scatter</item>
+        <item>Analyse</item>
+        <item>Feedback</item>
+    </array>
+    <array name="nav_drawer_icons">
+        <item>ic_measure</item>
+        <item>ic_scatter</item>
+        <item>ic_analyse</item>
+        <item>ic_feedback</item>
+    </array>
+</resources>
+
