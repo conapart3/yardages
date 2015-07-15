@@ -9,8 +9,9 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="35dp"
-        android:layout_marginRight="35dp">
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginTop="5dp">
 
         <com.gc.materialdesign.views.ButtonRectangle
             android:layout_width="wrap_content"
@@ -20,7 +21,8 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="0dp"
             android:layout_alignParentStart="false"
-            android:background="@color/primaryDark" />
+            android:textColor="@color/textPrimaryWhite"
+            android:background="@color/primary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,6 +32,7 @@
             android:id="@+id/latitude1"
             android:layout_marginTop="0dp"
             android:layout_below="@+id/button1"
+            android:textColor="@color/textPrimaryBlack"
             android:layout_alignStart="@+id/button1" />
 
         <TextView
@@ -40,6 +43,7 @@
             android:id="@+id/longitude1"
             android:layout_marginTop="0dp"
             android:layout_below="@+id/latitude1"
+            android:textColor="@color/textPrimaryBlack"
             android:layout_centerHorizontal="true" />
 
         <com.gc.materialdesign.views.ButtonRectangle
@@ -47,10 +51,11 @@
             android:layout_height="wrap_content"
             android:text="Point B"
             android:id="@+id/button2"
-            android:background="@color/primaryDark"
+            android:background="@color/primary"
             android:layout_centerVertical="true"
             android:layout_alignEnd="@+id/latitude1"
-            android:layout_marginTop="35dp" />
+            android:textColor="@color/textPrimaryWhite"
+            android:layout_marginTop="25dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,6 +65,7 @@
             android:id="@+id/latitude2"
             android:layout_below="@+id/button2"
             android:layout_centerHorizontal="true"
+            android:textColor="@color/textPrimaryBlack"
             android:layout_marginTop="0dp" />
 
         <TextView
@@ -70,6 +76,7 @@
             android:id="@+id/longitude2"
             android:layout_below="@+id/latitude2"
             android:layout_centerHorizontal="true"
+            android:textColor="@color/textPrimaryBlack"
             android:layout_marginTop="0dp" />
 
         <com.gc.materialdesign.views.ButtonRectangle
@@ -77,21 +84,24 @@
             android:layout_height="wrap_content"
             android:text="Distance"
             android:id="@+id/button3"
-            android:layout_marginTop="35dp"
-            android:background="@color/primaryDark" />
+            android:layout_marginTop="25dp"
+            android:textColor="@color/textPrimaryWhite"
+            android:background="@color/primary" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Approx distance (metres)"
+            android:textColor="@color/textPrimaryBlack"
             android:id="@+id/distanceOld" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Distance (yards)"
+            android:text="Precise distance (yards)"
+            android:textColor="@color/primaryDark"
             android:id="@+id/distance" />
 
     </LinearLayout>
@@ -105,7 +115,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="24dp"
-        android:background="@color/primaryDark"
+        android:background="@color/primary"
         android:backgroundTint="@color/accent"
         materialdesign:animate="true"
         materialdesign:iconDrawable="@drawable/ic_action_new" />

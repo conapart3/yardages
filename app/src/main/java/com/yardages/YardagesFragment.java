@@ -41,7 +41,7 @@ public class YardagesFragment extends Fragment {
     private ButtonRectangle button1, button2, button3;
     private TextView latitude1, longitude1, latitude2, longitude2, distance, distanceOld;
     private ButtonFloat floatButton;
-    private Context context;
+    private Context context;//this is just getActivity()
 
     private ArrayList<Location> locationList;
 
@@ -72,7 +72,13 @@ public class YardagesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getActivity();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         button1 = (ButtonRectangle) getActivity().findViewById(R.id.button1);
         button2 = (ButtonRectangle) getActivity().findViewById(R.id.button2);
@@ -85,19 +91,12 @@ public class YardagesFragment extends Fragment {
         distance = (TextView) getActivity().findViewById(R.id.distance);
         distanceOld = (TextView) getActivity().findViewById(R.id.distanceOld);
 
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         locationListener = new LocationListener(){
             public void onLocationChanged(Location location) {
                 changeCounts = changeCounts + 1;
                 CharSequence text = "Location changed." + changeCounts;
                 int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
+                Toast toast = Toast.makeText(getActivity(), text, duration);
                 toast.show();
             }
 
@@ -161,7 +160,7 @@ public class YardagesFragment extends Fragment {
                 } else {
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, text, duration);
+                    Toast toast = Toast.makeText(getActivity(), text, duration);
                     toast.show();
                 }
             }
@@ -177,7 +176,7 @@ public class YardagesFragment extends Fragment {
                 } else {
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, text, duration);
+                    Toast toast = Toast.makeText(getActivity(), text, duration);
                     toast.show();
                 }
             }
@@ -197,14 +196,15 @@ public class YardagesFragment extends Fragment {
                     double distOld = location1.distanceTo(location2);
                     double dist = getDistanceMetres(location1, location2);
 //                    distOld = metresToYards(distOld);
+                    distOld = (double)(Math.round(distOld*100))/100;
                     dist = metresToYards(dist);
-                    distanceOld.setText("" + distOld);
-                    distance.setText("" + dist);
+                    distanceOld.setText("" + distOld + " m");
+                    distance.setText("" + dist + " yds");
                     text = "Distance shown.";
                 }
 
                 int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
+                Toast toast = Toast.makeText(getActivity(), text, duration);
                 toast.show();
             }
         });
@@ -213,7 +213,7 @@ public class YardagesFragment extends Fragment {
             public void onClick(View view) {
                 CharSequence text = "Golf ball added.";
                 int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
+                Toast toast = Toast.makeText(getActivity(), text, duration);
                 toast.show();
 //
 //                ScatterFragment scatterFragment = new ScatterFragment();
