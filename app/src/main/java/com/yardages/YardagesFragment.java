@@ -1,25 +1,30 @@
 package com.yardages;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gc.materialdesign.views.ButtonFloat;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
+
+//import android.database.sqlite.*;
 
 
 /**
@@ -31,19 +36,21 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class YardagesFragment extends Fragment {
-    GoogleApiClient mGoogleApiClient;
-    Location location1,location2;
-    LocationManager locationManager;
-    LocationListener locationListener;
-    int changeCounts = 0;
+    private GoogleApiClient mGoogleApiClient;
+    private Location currentLocation, targetLocation, teeLocation;
+    private Double currentDistance;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private int changeCounts = 0, ballNumber = 0;
     // Request code to use when launching the resolution activity
 
-    private ButtonRectangle button1, button2, button3;
-    private TextView latitude1, longitude1, latitude2, longitude2, distance, distanceOld;
-    private ButtonFloat floatButton;
+    private ButtonRectangle teeButton, addBallButton, deleteBallButton, saveButton, targetButton;
+    private TextView distanceText, ballNumberText, lastBallText;
+    private EditText nameEditText;
     private Context context;//this is just getActivity()
 
-    private ArrayList<Location> locationList;
+    private String description;
+    private ArrayList<Location> locationList = new ArrayList<Location>();
 
 
     private OnFragmentInteractionListener mListener;
@@ -80,24 +87,31 @@ public class YardagesFragment extends Fragment {
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        button1 = (ButtonRectangle) getActivity().findViewById(R.id.button1);
-        button2 = (ButtonRectangle) getActivity().findViewById(R.id.button2);
-        button3 = (ButtonRectangle) getActivity().findViewById(R.id.button3);
-        floatButton = (ButtonFloat) getActivity().findViewById(R.id.buttonFloat);
-        latitude1 = (TextView) getActivity().findViewById(R.id.latitude1);
-        longitude1 = (TextView) getActivity().findViewById(R.id.longitude1);
-        latitude2 = (TextView) getActivity().findViewById(R.id.latitude2);
-        longitude2 = (TextView) getActivity().findViewById(R.id.longitude2);
-        distance = (TextView) getActivity().findViewById(R.id.distance);
-        distanceOld = (TextView) getActivity().findViewById(R.id.distanceOld);
+        teeButton = (ButtonRectangle) getActivity().findViewById(R.id.teeBtn);
+        addBallButton = (ButtonRectangle) getActivity().findViewById(R.id.addBallBtn);
+        saveButton = (ButtonRectangle) getActivity().findViewById(R.id.saveBtn);
+        deleteBallButton = (ButtonRectangle) getActivity().findViewById(R.id.deleteBallBtn);
+        targetButton = (ButtonRectangle) getActivity().findViewById(R.id.targetBtn);
+
+        distanceText = (TextView) getActivity().findViewById(R.id.distanceTxt);
+        ballNumberText = (TextView) getActivity().findViewById(R.id.ballNumberTxt);
+        lastBallText = (TextView) getActivity().findViewById(R.id.lastBallTxt);
+
+        nameEditText = (EditText) getActivity().findViewById(R.id.nameEditTxt);
 
         locationListener = new LocationListener(){
             public void onLocationChanged(Location location) {
+                currentLocation = location;
                 changeCounts = changeCounts + 1;
                 CharSequence text = "Location changed." + changeCounts;
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(getActivity(), text, duration);
                 toast.show();
+
+                if(teeLocation != null && currentLocation != null){
+                    currentDistance = getDistance(currentLocation,teeLocation);
+                    distanceText.setText(""+currentDistance +" yards");
+                }
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras){}
@@ -149,14 +163,32 @@ public class YardagesFragment extends Fragment {
 
     private void setupButtonListeners(){
 
-        button1.setOnClickListener(new View.OnClickListener() {
+//        nameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                description = nameEditText.getText().toString();
+//                nameEditText.clearFocus();
+//
+//            }
+//        });
+        nameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //Clear focus here from edittext
+                    nameEditText.clearFocus();
+                    nameEditText.setCursorVisible(false);
+                }
+                return false;
+            }
+        });
+
+        teeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                location1 = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                location1 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if(location1 != null){
-                    latitude1.setText(String.valueOf(location1.getLatitude()));
-                    longitude1.setText(String.valueOf(location1.getLongitude()));
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if(currentLocation != null){
+                    teeLocation = currentLocation;
                 } else {
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
@@ -165,14 +197,13 @@ public class YardagesFragment extends Fragment {
                 }
             }
         });
-        button2.setOnClickListener(new View.OnClickListener() {
+
+        targetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                location2 = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                location2 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (location2 != null) {
-                    latitude2.setText(String.valueOf(location2.getLatitude()));
-                    longitude2.setText(String.valueOf(location2.getLongitude()));
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (currentLocation != null) {
+                    targetLocation = currentLocation;
                 } else {
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
@@ -181,56 +212,62 @@ public class YardagesFragment extends Fragment {
                 }
             }
         });
-        button3.setOnClickListener(new View.OnClickListener() {
+
+        addBallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CharSequence text = "";
-                if (location1 == null && location2 == null)
-                    text = "Point A and B not set, wait for GPS signal.";
-                else if (location1 == null && location2 != null)
-                    text = "Point A not set, select your start point.";
-                else if (location1 != null && location2 == null)
-                    text = "Select Point B location.";
-
-                if (location1 != null && location2 != null) {
-                    double distOld = location1.distanceTo(location2);
-                    double dist = getDistanceMetres(location1, location2);
-//                    distOld = metresToYards(distOld);
-                    distOld = (double)(Math.round(distOld*100))/100;
-                    dist = metresToYards(dist);
-                    distanceOld.setText("" + distOld + " m");
-                    distance.setText("" + dist + " yds");
-                    text = "Distance shown.";
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (currentLocation != null) {
+                    locationList.add(currentLocation);
+                    ballNumber=ballNumber+1;
+                    ballNumberText.setText("Balls Added: " +ballNumber);
+                    if(teeLocation != null) {
+                        currentDistance = getDistance(currentLocation, teeLocation);
+                        lastBallText.setText("Last Ball: " +currentDistance +" (yards)");
+                    }
+                } else {
+                    CharSequence text = "Location null, try again with signal.";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getActivity(), text, duration);
+                    toast.show();
                 }
-
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(getActivity(), text, duration);
-                toast.show();
             }
         });
-        floatButton.setOnClickListener(new View.OnClickListener() {
+
+        deleteBallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CharSequence text = "Golf ball added.";
+                if (locationList.size() > 0) {
+                    locationList.remove(locationList.size()-1);
+                    ballNumber=ballNumber-1;
+                    ballNumberText.setText("Balls Added: " +ballNumber);
+                }
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+//                YardagesDbHelper dbHelper = new YardagesDbHelper(getActivity());
+//                SQLiteDatabase db = dbHelper.getWritableDatabase();
+//
+//
+//                ContentValues values = new ContentValues();
+//                values.put("Description", )
+
+
+
+                CharSequence text = "Scatter Saved.";
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(getActivity(), text, duration);
                 toast.show();
-//
-//                ScatterFragment scatterFragment = new ScatterFragment();
-//                Bundle args = new Bundle();
-//                args.putInt("key1", 100);
-//                scatterFragment.setArguments(args);
-//
-//                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//                transaction.replace(R.id.container, scatterFragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
             }
         });
     }
 
 
-    public double getDistanceMetres(Location l1, Location l2) {
+    public double getDistance(Location l1, Location l2) {
         double lat1 = l1.getLatitude();
         double lon1 = l1.getLongitude();
         double lat2 = l2.getLatitude();
@@ -245,6 +282,8 @@ public class YardagesFragment extends Fragment {
                 Math.cos(lat1Rad) * Math.cos(lat2Rad) *
                         Math.cos(deltaLonRad)) * EARTH_RADIUS_KM;
         dist = dist * 1000;
+
+        dist = metresToYards(dist);
         return dist;
     }
 
@@ -265,7 +304,7 @@ public class YardagesFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+        // TODO: Update argument type and description
         public void onFragmentInteraction(Uri uri);
     }
 
