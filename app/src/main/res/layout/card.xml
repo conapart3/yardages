@@ -4,44 +4,94 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="250dp"
+    android:layout_gravity="center"
     card_view:cardCornerRadius="4dp"
-    android:layout_margin="5dp">
+    android:layout_margin="5dp"
+    card_view:cardElevation="8dp"
+    card_view:cardBackgroundColor="@color/cardview_light_background">
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView"
-            android:layout_below="@+id/txtName"
-            android:layout_centerHorizontal="true" />
-
-        <TextView
-            android:id="@+id/title"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Club: "
-            android:gravity="center_vertical"
-            android:textColor="@color/textPrimaryBlack"
-            android:textSize="24dp"
-            android:autoText="false"
-            android:layout_marginLeft="5dp"/>
+            android:layout_height="200dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="fitXY"
+                android:id="@+id/cardImg"/>
+                <!--android:background="@drawable/ardglass"-->
+                <!--android:alpha="0.8"/>-->
+            <TextView
+                android:id="@+id/descriptionBck"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:background="@color/textPrimaryBlack"
+                android:alpha="0.4"/>
+            <TextView
+                android:id="@+id/descriptionTxt"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Description "
+                android:gravity="center_vertical"
+                android:textColor="@color/textPrimaryWhite"
+                android:textSize="24dp"
+                android:autoText="false"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true" />
 
-        <TextView
-            android:id="@+id/txtName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name"
-            android:gravity="center_vertical"
-            android:textColor="@color/textSecondaryBlack"
-            android:textSize="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_below="@+id/title" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+            <TextView
+                android:id="@+id/accuracyTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accuracy: 83%"
+                android:gravity="center_vertical"
+                android:textColor="@color/textSecondaryBlack"
+                android:textSize="20dp"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/dateTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01/08/2015"
+                android:gravity="center_vertical"
+                android:textColor="@color/textSecondaryBlack"
+                android:textSize="20dp"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+
+            <TextView
+                android:id="@+id/ballsTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9 Balls "
+                android:gravity="center_vertical"
+                android:textColor="@color/textSecondaryBlack"
+                android:textSize="20dp"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
 
 
 
-    </RelativeLayout>
+
+    </LinearLayout>
     </android.support.v7.widget.CardView>

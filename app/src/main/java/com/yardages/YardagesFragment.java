@@ -1,9 +1,7 @@
 package com.yardages;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,35 +20,37 @@ import android.widget.Toast;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-//import android.database.sqlite.*;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link YardagesFragment.OnFragmentInteractionListener} interface
+ * {@link OnFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link YardagesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class YardagesFragment extends Fragment {
     private GoogleApiClient mGoogleApiClient;
-    private Location currentLocation, targetLocation, teeLocation;
-    private Double currentDistance;
+    private Location currentLocation;
+    private Double currentDistance, targetDistance;
     private LocationManager locationManager;
     private LocationListener locationListener;
-    private int changeCounts = 0, ballNumber = 0;
     // Request code to use when launching the resolution activity
 
     private ButtonRectangle teeButton, addBallButton, deleteBallButton, saveButton, targetButton;
-    private TextView distanceText, ballNumberText, lastBallText;
+    private TextView distanceText, ballNumberText, lastBallText, targetText;
     private EditText nameEditText;
     private Context context;//this is just getActivity()
 
     private String description;
-    private ArrayList<Location> locationList = new ArrayList<Location>();
+    private ArrayList<Ball> ballList = new ArrayList<Ball>();
+    long scatterRowNum;
+    private int changeCounts = 0, ballNumber = 0;
+    private Location targetLocation, teeLocation;
 
 
     private OnFragmentInteractionListener mListener;
@@ -59,12 +59,10 @@ public class YardagesFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment YardagesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static YardagesFragment newInstance(String param1, String param2) {
+    public static YardagesFragment newInstance() {
         YardagesFragment fragment = new YardagesFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -96,21 +94,24 @@ public class YardagesFragment extends Fragment {
         distanceText = (TextView) getActivity().findViewById(R.id.distanceTxt);
         ballNumberText = (TextView) getActivity().findViewById(R.id.ballNumberTxt);
         lastBallText = (TextView) getActivity().findViewById(R.id.lastBallTxt);
+        targetText = (TextView) getActivity().findViewById(R.id.targetTxt);
 
         nameEditText = (EditText) getActivity().findViewById(R.id.nameEditTxt);
 
         locationListener = new LocationListener(){
             public void onLocationChanged(Location location) {
                 currentLocation = location;
-                changeCounts = changeCounts + 1;
-                CharSequence text = "Location changed." + changeCounts;
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(getActivity(), text, duration);
-                toast.show();
+//                changeCounts = changeCounts + 1;
+//                CharSequence text = "Location changed." + changeCounts;
+//                int duration = Toast.LENGTH_SHORT;
+//                Toast toast = Toast.makeText(getActivity(), text, duration);
+//                toast.show();
 
                 if(teeLocation != null && currentLocation != null){
                     currentDistance = getDistance(currentLocation,teeLocation);
-                    distanceText.setText(""+currentDistance +" yards");
+                    distanceText.setText("Current dist: "+currentDistance +" yards");
+                } else {
+                    distanceText.setText("Ready.");
                 }
             }
 
@@ -151,7 +152,7 @@ public class YardagesFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnScatterSavedListener");
         }
     }
 
@@ -163,19 +164,12 @@ public class YardagesFragment extends Fragment {
 
     private void setupButtonListeners(){
 
-//        nameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                description = nameEditText.getText().toString();
-//                nameEditText.clearFocus();
-//
-//            }
-//        });
         nameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     //Clear focus here from edittext
+                    description = nameEditText.getText().toString();
                     nameEditText.clearFocus();
                     nameEditText.setCursorVisible(false);
                 }
@@ -204,6 +198,10 @@ public class YardagesFragment extends Fragment {
                 currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (currentLocation != null) {
                     targetLocation = currentLocation;
+                    if(teeLocation != null) {
+                        targetDistance = getDistance(targetLocation, teeLocation);
+                        targetText.setText("Target: " +targetDistance +" (yards)");
+                    }
                 } else {
                     CharSequence text = "Location null, try again with signal.";
                     int duration = Toast.LENGTH_SHORT;
@@ -216,11 +214,16 @@ public class YardagesFragment extends Fragment {
         addBallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Ball b = new Ball();
                 currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (currentLocation != null) {
-                    locationList.add(currentLocation);
+                    b.setLatitude(currentLocation.getLatitude());
+                    b.setLongitude(currentLocation.getLongitude());
+                    ballList.add(b);
+
                     ballNumber=ballNumber+1;
                     ballNumberText.setText("Balls Added: " +ballNumber);
+
                     if(teeLocation != null) {
                         currentDistance = getDistance(currentLocation, teeLocation);
                         lastBallText.setText("Last Ball: " +currentDistance +" (yards)");
@@ -237,8 +240,8 @@ public class YardagesFragment extends Fragment {
         deleteBallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (locationList.size() > 0) {
-                    locationList.remove(locationList.size()-1);
+                if (ballList.size() > 0) {
+                    ballList.remove(ballList.size()-1);
                     ballNumber=ballNumber-1;
                     ballNumberText.setText("Balls Added: " +ballNumber);
                 }
@@ -249,19 +252,31 @@ public class YardagesFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-//                YardagesDbHelper dbHelper = new YardagesDbHelper(getActivity());
-//                SQLiteDatabase db = dbHelper.getWritableDatabase();
-//
-//
-//                ContentValues values = new ContentValues();
-//                values.put("Description", )
+                Scatter sc = new Scatter();
+                sc.setDescription(description);
+                sc.setBallList(ballList);
+                sc.setTeeLocation(teeLocation);
+                sc.setTargetLocation(targetLocation);
 
+                YardagesDbHelper dbHelper = new YardagesDbHelper(getActivity());
 
+                try {
+                    scatterRowNum = dbHelper.addScatter(sc);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 CharSequence text = "Scatter Saved.";
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(getActivity(), text, duration);
                 toast.show();
+
+                //go to the scatter fragment
+                ScatterFragment scatterFragment = ScatterFragment.newInstance(scatterRowNum);
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.container, scatterFragment, null)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }
