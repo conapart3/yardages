@@ -27,10 +27,9 @@ public class ScatterFragment extends Fragment{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private long scatterId;
-    private Scatter scatter;
 
     private Dot dot;
-    private ArrayList<Ball> ballList;
+    private Scatter scatter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,17 +57,24 @@ public class ScatterFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        scatterId = -1;
+//        scatterId = -1;
         if (getArguments() != null) {
             scatterId = getArguments().getLong(ARG_PARAM1);
         }
 
-        Bitmap b = Bitmap.createBitmap(100,100,Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        dot = new Dot(this.getActivity(), 100, 100);
-        dot.draw(c);
-
+        dot = new Dot(getActivity(), 200, 100);
+//        setContentView(dot);
     }
+
+//    @Override
+//    protected void onDraw(Canvas canvas){
+//        super.onDraw(canvas);
+//        Bitmap b = Bitmap.createBitmap(100,100,Bitmap.Config.ARGB_8888);
+//        Canvas c = new Canvas(b);
+//        dot = new Dot(getActivity(), 100, 100);
+//        dot.drawBitmap(c);
+//
+//    }
 
     @Override
     public void onStart(){
@@ -76,6 +82,8 @@ public class ScatterFragment extends Fragment{
 
         YardagesDbHelper dbHelper = new YardagesDbHelper(getActivity());
         scatter = dbHelper.getScatter(scatterId);
+
+
     }
 
     @Override

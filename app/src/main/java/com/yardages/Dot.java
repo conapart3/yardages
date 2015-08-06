@@ -2,6 +2,7 @@ package com.yardages;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
 
@@ -12,18 +13,22 @@ public class Dot extends View {
     private final float x;
     private final float y;
     private final int r = 5;
-    private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paint;
 
     public Dot(Context context, float x, float y) {
         super(context);
-        mPaint.setColor(0xFFFF0000);
+
+        paint = new Paint();
+        paint.setColor(Color.WHITE);//ball
         this.x = x;
         this.y = y;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawCircle(x,y,r,mPaint);
+//        super.onDraw(canvas);
+        canvas.drawColor(Color.GREEN);//background
+//        canvas.drawCircle(x,y,r,paint);
+        canvas.drawCircle(200,200,100,paint);
     }
 }

@@ -252,31 +252,39 @@ public class YardagesFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Scatter sc = new Scatter();
-                sc.setDescription(description);
-                sc.setBallList(ballList);
-                sc.setTeeLocation(teeLocation);
-                sc.setTargetLocation(targetLocation);
+//                if(description!=null || ballList.size()!=0 || teeLocation != null || targetLocation != null) {
 
-                YardagesDbHelper dbHelper = new YardagesDbHelper(getActivity());
+                    Scatter sc = new Scatter();
+                    sc.setDescription(description);
+                    sc.setBallList(ballList);
+                    sc.setTeeLocation(teeLocation);
+                    sc.setTargetLocation(targetLocation);
 
-                try {
-                    scatterRowNum = dbHelper.addScatter(sc);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    YardagesDbHelper dbHelper = new YardagesDbHelper(getActivity());
 
-                CharSequence text = "Scatter Saved.";
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(getActivity(), text, duration);
-                toast.show();
+                    try {
+                        scatterRowNum = dbHelper.addScatter(sc);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                //go to the scatter fragment
-                ScatterFragment scatterFragment = ScatterFragment.newInstance(scatterRowNum);
-                getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.container, scatterFragment, null)
-                        .addToBackStack(null)
-                        .commit();
+                    CharSequence text = "Scatter Saved.";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getActivity(), text, duration);
+                    toast.show();
+
+                    //go to the scatter fragment
+                    ScatterFragment scatterFragment = ScatterFragment.newInstance(scatterRowNum);
+                    getActivity().getFragmentManager().beginTransaction()
+                            .replace(R.id.container, scatterFragment, null)
+                            .addToBackStack(null)
+                            .commit();
+//                } else {
+//                    CharSequence text = "Scatter empty, use this screen to create a new scatter.";
+//                    int duration = Toast.LENGTH_SHORT;
+//                    Toast toast = Toast.makeText(getActivity(), text, duration);
+//                    toast.show();
+//                }
             }
         });
     }
