@@ -241,9 +241,9 @@ public class YardagesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (ballList.size() > 0) {
-                    ballList.remove(ballList.size()-1);
-                    ballNumber=ballNumber-1;
-                    ballNumberText.setText("Balls Added: " +ballNumber);
+                    ballList.remove(ballList.size() - 1);
+                    ballNumber = ballNumber - 1;
+                    ballNumberText.setText("Balls Added: " + ballNumber);
                 }
             }
         });
@@ -251,14 +251,19 @@ public class YardagesFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-//                if(description!=null || ballList.size()!=0 || teeLocation != null || targetLocation != null) {
-
+                if (ballList.size()>0) {
                     Scatter sc = new Scatter();
+
                     sc.setDescription(description);
                     sc.setBallList(ballList);
-                    sc.setTeeLocation(teeLocation);
-                    sc.setTargetLocation(targetLocation);
+                    if (teeLocation != null) {
+                        sc.setTeeLatitude(teeLocation.getLatitude());
+                        sc.setTeeLongitude(teeLocation.getLongitude());
+                    }
+                    if (targetLocation != null) {
+                        sc.setTargetLatitude(targetLocation.getLatitude());
+                        sc.setTargetLongitude(targetLocation.getLongitude());
+                    }
 
                     YardagesDbHelper dbHelper = new YardagesDbHelper(getActivity());
 
@@ -279,16 +284,15 @@ public class YardagesFragment extends Fragment {
                             .replace(R.id.container, scatterFragment, null)
                             .addToBackStack(null)
                             .commit();
-//                } else {
-//                    CharSequence text = "Scatter empty, use this screen to create a new scatter.";
-//                    int duration = Toast.LENGTH_SHORT;
-//                    Toast toast = Toast.makeText(getActivity(), text, duration);
-//                    toast.show();
-//                }
+                } else {
+                    CharSequence text = "ERROR: Record ball data.";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getActivity(), text, duration);
+                    toast.show();
+                }
             }
         });
     }
-
 
     public double getDistance(Location l1, Location l2) {
         double lat1 = l1.getLatitude();

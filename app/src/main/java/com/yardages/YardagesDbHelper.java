@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class YardagesDbHelper extends SQLiteOpenHelper {
     Context context;
-    final static int DB_VERSION = 4;
+    final static int DB_VERSION = 6;
     final static String DB_NAME = "YardagesDB";
     private String DB_PATH;
 
@@ -98,13 +98,13 @@ public class YardagesDbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 //        values.put("_id", "null");
         values.put("Description", scatter.getDescription());
-        if(scatter.getTeeLocation()!=null) {
-            values.put("TeeLatitude", scatter.getTeeLocation().getLatitude());
-            values.put("TeeLongitude", scatter.getTeeLocation().getLongitude());
+        if(scatter.getTeeLatitude()!=null) {
+            values.put("TeeLatitude", scatter.getTeeLatitude());
+            values.put("TeeLongitude", scatter.getTeeLongitude());
         }
-        if(scatter.getTargetLocation()!=null) {
-            values.put("TargetLatitude", scatter.getTargetLocation().getLatitude());
-            values.put("TargetLongitude", scatter.getTargetLocation().getLongitude());
+        if(scatter.getTargetLatitude()!=null) {
+            values.put("TargetLatitude", scatter.getTargetLatitude());
+            values.put("TargetLongitude", scatter.getTargetLongitude());
         }
         values.put("Date", "DATETIME('now')");
 
@@ -134,43 +134,50 @@ public class YardagesDbHelper extends SQLiteOpenHelper {
         //table SCATTER, with columns id and description, with selection being id = argument,
         //with the argument being the value of id.
         Cursor scatterCursor = db.query("SCATTER",
-                new String[]{"_id", "Description"},
+                new String[]{"_id", "Description", "TeeLatitude", "TeeLongitude", "TargetLatitude", "TargetLongitude"},
                 "_id=?",
                 new String[]{String.valueOf(scatterId)},
                 null, null, null, null);
 
-        if(scatterCursor != null)
+        Scatter scatter = new Scatter();
+        if(scatterCursor != null && scatterCursor.getCount() > 0) {
             scatterCursor.moveToFirst();
 
-        Scatter scatter = new Scatter();
-        scatter.setId(scatterCursor.getInt(scatterCursor.getColumnIndex("_id")));
-        scatter.setDescription(scatterCursor.getString(scatterCursor.getColumnIndex("Description")));
+            scatter.setId(scatterCursor.getInt(scatterCursor.getColumnIndex("_id")));
+            scatter.setDescription(scatterCursor.getString(scatterCursor.getColumnIndex("Description")));
+            scatter.setTeeLatitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TeeLatitude")));
+            scatter.setTeeLongitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TeeLongitude")));
+            scatter.setTargetLatitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TargetLatitude")));
+            scatter.setTargetLongitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TargetLongitude")));
+            //get date
 
-        //also get all balls
-        Cursor ballCursor = db.query("BALL",
-                new String[]{"_id", "Latitude", "Longitude"},
-                "ScatterId=?",
-                new String[]{String.valueOf(scatterId)},
-                null, null, null, null);
+            //also get all balls
+            Cursor ballCursor = db.query("BALL",
+                    new String[]{"_id", "Latitude", "Longitude"},
+                    "ScatterId=?",
+                    new String[]{String.valueOf(scatterId)},
+                    null, null, null, null);
 
-        if(ballCursor.moveToFirst()){
-            while(!ballCursor.isAfterLast()){
-                int ballId = ballCursor.getInt(ballCursor.getColumnIndex("_id"));
-                double ballLatitude = ballCursor.getDouble(ballCursor.getColumnIndex("Latitude"));
-                double ballLongitude = ballCursor.getDouble(ballCursor.getColumnIndex("Longitude"));
+            if (ballCursor.moveToFirst()) {
+                while (!ballCursor.isAfterLast()) {
+                    int ballId = ballCursor.getInt(ballCursor.getColumnIndex("_id"));
+                    double ballLatitude = ballCursor.getDouble(ballCursor.getColumnIndex("Latitude"));
+                    double ballLongitude = ballCursor.getDouble(ballCursor.getColumnIndex("Longitude"));
 
-                Ball b = new Ball();
-                b.setId(ballId);
-                b.setLatitude(ballLatitude);
-                b.setLongitude(ballLongitude);
-                scatter.addBall(b);
+                    Ball b = new Ball();
+                    b.setId(ballId);
+                    b.setLatitude(ballLatitude);
+                    b.setLongitude(ballLongitude);
+                    scatter.addBall(b);
 
-                ballCursor.moveToNext();
+                    ballCursor.moveToNext();
+                }
             }
+            ballCursor.close();
+            return scatter;
+        } else {
+            return null;
         }
-        ballCursor.close();
-
-        return scatter;
     }
 
     private void writeToSD() throws IOException {

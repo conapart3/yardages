@@ -19,12 +19,13 @@ import java.util.List;
  */
 public class ClubCardAdapter extends RecyclerView.Adapter<ClubCardAdapter.ClubCardViewHolder> {
 
+    private static ClickListener clickListener;
     private ArrayList<Scatter> scatterList;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ClubCardViewHolder extends RecyclerView.ViewHolder{
+    public static class ClubCardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         protected TextView vDescription;
         protected ImageView vImg;
@@ -35,9 +36,24 @@ public class ClubCardAdapter extends RecyclerView.Adapter<ClubCardAdapter.ClubCa
             super(v);
             vDescription = (TextView) v.findViewById(R.id.descriptionTxt);
             vImg = (ImageView) v.findViewById(R.id.cardImg);
+            v.setOnClickListener(this);
+//            v.setOnLongClickListener(this);
         }
+
+//        @Override
+        public void onClick(View v){
+            clickListener.onItemClick(getPosition(),v);
+        }
+
     }
 
+    public void setOnItemClickListener(ClickListener clickListener){
+        ClubCardAdapter.clickListener = clickListener;
+    }
+
+    public interface ClickListener{
+        void onItemClick(int position, View v);
+    }
 
     public ClubCardAdapter(ArrayList<Scatter> scatterList){
         this.scatterList = scatterList;

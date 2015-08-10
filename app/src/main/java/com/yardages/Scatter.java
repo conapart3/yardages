@@ -16,8 +16,7 @@ public class Scatter {
     private int id;
     private String description;
     private ArrayList<Ball> ballList;
-    private Location teeLocation;
-    private Location targetLocation;
+    private Double teeLatitude, teeLongitude, targetLatitude, targetLongitude;
     private Date date;
 //    private boolean isArchived;
 
@@ -33,33 +32,18 @@ public class Scatter {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-
-    public Location getTargetLocation() {
-        return targetLocation;
-    }
-
-    public void setTargetLocation(Location targetLocation) {
-        this.targetLocation = targetLocation;
-    }
-
-
     public String getDescription() {
+
         return description;
     }
 
     public void setDescription(String description) {
+
         this.description = description;
     }
 
     public ArrayList<Ball> getBallList() {
+
         return ballList;
     }
 
@@ -75,19 +59,46 @@ public class Scatter {
         return ballList.get(i);
     }
 
-    public Location getTeeLocation() {
-        return teeLocation;
+    public Double getTeeLatitude() {
+        return teeLatitude;
     }
 
-    public void setTeeLocation(Location teeLocation) {
-        this.teeLocation = teeLocation;
+    public void setTeeLatitude(Double teeLatitude) {
+        this.teeLatitude = teeLatitude;
     }
 
-//    public boolean isArchived() {
-//        return isArchived;
-//    }
-//
-//    public void setIsArchived(boolean isArchived) {
-//        this.isArchived = isArchived;
-//    }
+    public Double getTeeLongitude() {
+        return teeLongitude;
+    }
+
+    public void setTeeLongitude(Double teeLongitude) {
+        this.teeLongitude = teeLongitude;
+    }
+
+    public Double getTargetLatitude() {
+        return targetLatitude;
+    }
+
+    public void setTargetLatitude(Double targetLatitude) {
+        this.targetLatitude = targetLatitude;
+    }
+
+    public Double getTargetLongitude() {
+        return targetLongitude;
+    }
+
+    public void setTargetLongitude(Double targetLongitude) {
+        this.targetLongitude = targetLongitude;
+    }
+
+    public Date getDate() {
+
+        return date;
+    }
+
+    public void setDate(Date date) {
+
+        this.date = date;
+    }
+
 }

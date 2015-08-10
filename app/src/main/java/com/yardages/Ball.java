@@ -1,5 +1,7 @@
 package com.yardages;
 
+import android.graphics.Canvas;
+
 /**
  * Created by Conal on 28/07/2015.
  */
@@ -9,7 +11,12 @@ public class Ball {
     private double latitude;
     private double longitude;
     private int scatterId;
+    private float x,y;
 //    private boolean isArchived;
+
+    public Ball (){
+
+    }
 
     public double getLatitude() {
         return latitude;
@@ -43,11 +50,23 @@ public class Ball {
         this.id = id;
     }
 
-//    public boolean isArchived() {
-//        return isArchived;
-//    }
-//
-//    public void setIsArchived(boolean isArchived) {
-//        this.isArchived = isArchived;
-//    }
+    public void calculateDotLocationBasedOnLatLong(float width, float height){
+
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
 }

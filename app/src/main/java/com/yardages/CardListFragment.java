@@ -25,7 +25,8 @@ import java.util.ArrayList;
  */
 public class CardListFragment extends Fragment {
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+//    private RecyclerView.Adapter adapter;
+    private ClubCardAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private com.gc.materialdesign.views.ButtonFloat floatButton;
 
@@ -92,7 +93,16 @@ public class CardListFragment extends Fragment {
             }
         });
 
-
+        adapter.setOnItemClickListener(new ClubCardAdapter.ClickListener(){
+            @Override
+            public void onItemClick(int position, View v){
+                ScatterFragment scatterFragment = ScatterFragment.newInstance(position+1);
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.container, scatterFragment, null)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
     }
 
     @Override
