@@ -165,9 +165,11 @@ public class ScatterFragment extends Fragment{
         double ty = ((Math.abs(teeLat-maxLat)) * yScale);
         teePoint = new PointF((float)tx, (float)ty);
 
-        double trgx = ((Math.abs(targetLong-minLong)) * xScale);
-        double trgy = ((Math.abs(targetLat-maxLat)) * yScale);
-        targetPoint = new PointF((float)trgx, (float)trgy);
+        if(targetLat != null && targetLong != null) {
+            double trgx = ((Math.abs(targetLong - minLong)) * xScale);
+            double trgy = ((Math.abs(targetLat - maxLat)) * yScale);
+            targetPoint = new PointF((float) trgx, (float) trgy);
+        }
 
         for(int i = 0; i<ballLats.size(); i++){
 //            double x = (testLongs.get(i)+180)*(width/360);

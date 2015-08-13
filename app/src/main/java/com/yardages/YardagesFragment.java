@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -42,7 +44,7 @@ public class YardagesFragment extends Fragment {
     // Request code to use when launching the resolution activity
 
     private ButtonRectangle teeButton, addBallButton, deleteBallButton, saveButton, targetButton;
-    private TextView distanceText, ballNumberText, lastBallText, targetText;
+    private TextView distanceText, ballNumberText, lastBallText, targetText, accuracyText;
     private EditText nameEditText;
     private Context context;//this is just getActivity()
 
@@ -95,23 +97,20 @@ public class YardagesFragment extends Fragment {
         ballNumberText = (TextView) getActivity().findViewById(R.id.ballNumberTxt);
         lastBallText = (TextView) getActivity().findViewById(R.id.lastBallTxt);
         targetText = (TextView) getActivity().findViewById(R.id.targetTxt);
+        accuracyText = (TextView) getActivity().findViewById(R.id.accuracyTxt);
 
         nameEditText = (EditText) getActivity().findViewById(R.id.nameEditTxt);
 
         locationListener = new LocationListener(){
             public void onLocationChanged(Location location) {
                 currentLocation = location;
-//                changeCounts = changeCounts + 1;
-//                CharSequence text = "Location changed." + changeCounts;
-//                int duration = Toast.LENGTH_SHORT;
-//                Toast toast = Toast.makeText(getActivity(), text, duration);
-//                toast.show();
-
                 if(teeLocation != null && currentLocation != null){
                     currentDistance = getDistance(currentLocation,teeLocation);
                     distanceText.setText("Current dist: "+currentDistance +" yards");
+                    accuracyText.setText("Accuracy: " +metresToYards(currentLocation.getAccuracy()) +" yards");
                 } else {
                     distanceText.setText("Ready.");
+                    accuracyText.setText("Accuracy: " +metresToYards(currentLocation.getAccuracy()) +" yards");
                 }
             }
 

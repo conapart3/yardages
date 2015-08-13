@@ -54,11 +54,13 @@ public class ScatterView extends View {
             }
         }
 
-        paint.setColor(Color.RED);
-        canvas.drawCircle(targetPoint.x, targetPoint.y, 20, paint);
+        if(targetPoint!=null) {
+            paint.setColor(Color.RED);
+            canvas.drawCircle(targetPoint.x, targetPoint.y, 20, paint);
+        }
 
         paint.setColor(Color.GRAY);
-        canvas.drawRect(teePoint.x-30, teePoint.y-30, teePoint.x+30, teePoint.y+30, paint);
+        canvas.drawRect(teePoint.x - 30, teePoint.y - 30, teePoint.x + 30, teePoint.y + 30, paint);
 
     }
 

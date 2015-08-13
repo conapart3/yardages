@@ -145,10 +145,16 @@ public class YardagesDbHelper extends SQLiteOpenHelper {
 
             scatter.setId(scatterCursor.getInt(scatterCursor.getColumnIndex("_id")));
             scatter.setDescription(scatterCursor.getString(scatterCursor.getColumnIndex("Description")));
-            scatter.setTeeLatitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TeeLatitude")));
-            scatter.setTeeLongitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TeeLongitude")));
-            scatter.setTargetLatitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TargetLatitude")));
-            scatter.setTargetLongitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TargetLongitude")));
+
+            if(!scatterCursor.isNull(scatterCursor.getColumnIndex("TeeLatitude")) && !scatterCursor.isNull(scatterCursor.getColumnIndex("TeeLongitude"))) {
+                scatter.setTeeLatitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TeeLatitude")));
+                scatter.setTeeLongitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TeeLongitude")));
+            }
+
+            if(!scatterCursor.isNull(scatterCursor.getColumnIndex("TargetLatitude")) && !scatterCursor.isNull(scatterCursor.getColumnIndex("TeeLatitude"))) {
+                scatter.setTargetLatitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TargetLatitude")));
+                scatter.setTargetLongitude(scatterCursor.getDouble(scatterCursor.getColumnIndex("TargetLongitude")));
+            }
             //get date
 
             //also get all balls

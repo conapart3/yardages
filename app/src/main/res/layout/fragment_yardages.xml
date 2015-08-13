@@ -39,28 +39,37 @@
             <!--android:background="#A8A8A8"-->
             <!--android:orientation="horizontal" />-->
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tee Off"
-            android:id="@+id/teeBtn"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:layout_alignParentStart="false"
-            android:textColor="@color/textPrimaryWhite"
-            android:background="@color/primary" />
+            android:weightSum="2">
+
+            <com.gc.materialdesign.views.ButtonRectangle
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tee Off"
+                android:id="@+id/teeBtn"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_alignParentStart="false"
+                android:textColor="@color/textPrimaryWhite"
+                android:background="@color/primary"
+                android:layout_weight="1"/>
 
 
-        <com.gc.materialdesign.views.ButtonRectangle
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Target"
-            android:id="@+id/targetBtn"
-            android:background="@color/primary"
-            android:layout_centerVertical="true"
-            android:layout_alignEnd="@+id/latitude1"
-            android:textColor="@color/textPrimaryWhite"
-            android:layout_marginBottom="10dp" />
+            <com.gc.materialdesign.views.ButtonRectangle
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Target"
+                android:id="@+id/targetBtn"
+                android:background="@color/primary"
+                android:layout_centerVertical="true"
+                android:layout_alignEnd="@+id/latitude1"
+                android:textColor="@color/textPrimaryWhite"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
 
         <com.gc.materialdesign.views.ButtonRectangle
             android:layout_width="match_parent"
@@ -72,6 +81,14 @@
             android:layout_alignEnd="@+id/latitude1"
             android:textColor="@color/textPrimaryWhite"
             android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:id="@+id/accuracyTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Accuracy: 0"
+            android:textColor="@color/textPrimaryBlack"/>
 
         <TextView
             android:layout_width="match_parent"
